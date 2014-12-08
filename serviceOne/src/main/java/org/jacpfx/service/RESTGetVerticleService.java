@@ -1,14 +1,16 @@
 package org.jacpfx.service;
 
 
+import io.vertx.core.buffer.Buffer;
+import io.vertx.core.eventbus.Message;
+import io.vertx.core.json.JsonObject;
 import org.jacpfx.common.OperationType;
 import org.jacpfx.common.Type;
 import org.jacpfx.model.Employee;
 import org.jacpfx.vertx.services.ServiceVerticle;
-import org.vertx.java.core.eventbus.Message;
-import org.vertx.java.core.json.JsonObject;
 
 import javax.ws.rs.*;
+import java.io.UnsupportedEncodingException;
 
 /**
  * Created by amo on 29.10.14.
@@ -31,7 +33,7 @@ public class RESTGetVerticleService extends ServiceVerticle {
     @OperationType(Type.REST_GET)
     @Produces("application/json")
     public JsonObject getTestEmployeeTwo(@PathParam("id") String id) {
-        return new JsonObject().putString("id",id);
+        return new JsonObject().put("id",id);
     }
 
 
@@ -62,5 +64,21 @@ public class RESTGetVerticleService extends ServiceVerticle {
         return new Employee(id,"dfg",null,"dfg","fdg","dfg");
     }
 
+    @Path("/getAll")
+    @OperationType(Type.REST_GET)
+    @Produces({"text/json","application/json"})
+    public void getAll(@QueryParam("name") String name, final Message message) {
 
+        vertx.fileSystem().readFile("employeeAll.json", ar ->{
+            if (ar.succeeded()) {
+                final Buffer result = ar.result();
+                try {
+                    message.reply(new String(result.getBytes(),"UTF-8"));
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        });
+    }
 }

@@ -1,5 +1,5 @@
 {
-  "main":"org.jacpfx.service.EmployeeVerticleService",
+  "main":"org.jacpfx.service.RESTPOSTVerticleServices",
   "description":"a sample vert.x micro service",
   "licenses": ["The Apache Software License Version 2.0"],
   "author": "Andy Moncsek",
