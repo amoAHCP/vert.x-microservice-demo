@@ -4,6 +4,7 @@ package org.jacpfx.service;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonObject;
+import org.jacpfx.common.MessageReply;
 import org.jacpfx.common.OperationType;
 import org.jacpfx.common.Type;
 import org.jacpfx.model.Employee;
@@ -19,6 +20,21 @@ import java.io.UnsupportedEncodingException;
 public class RESTGetVerticleService extends ServiceVerticle {
 
 
+    @Path("/wsEndpintOne")
+    @OperationType(Type.WEBSOCKET)
+    public void wsEndpointOne(String name,MessageReply reply) {
+
+    }
+
+    @Path("/hello")
+    @OperationType(Type.WEBSOCKET)
+    public void wsEndpointHello(String name,MessageReply reply) {
+
+          reply.send(name);
+        reply.send(name + "-1");
+        reply.send(name+"-2");
+        System.out.println("Message-1: "+name+"   :::"+this);
+    }
 
 
     @Path("/testEmployeeOne")
