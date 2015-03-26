@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.jacpfx</groupId>
+  <artifactId>serviceOne</artifactId>
+  <packaging>jar</packaging>
+  <version>0.1</version>
+  <name>Project - serviceOne</name>
+  <url>http://maven.apache.org</url>
+
+  <parent>
+     <groupId>org.sonatype.oss</groupId>
+     <artifactId>oss-parent</artifactId>
+     <version>7</version>
+  </parent>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <!-- Set pullInDeps to true if you want any modules specified in the 'includes' and 'deploys' fields
+    in your mod.json to be automatically pulled in during packaging and added inside your module. Doing this means your
+    module won't download and install those dependencies at run-time when they're first requested. -->
+    <vertx.pullInDeps>false</vertx.pullInDeps>
+
+    <!-- Set createFatJar to true if you want to create a fat executable jar which contains the Vert.x binaries
+    along with the module so it can be run with java -jar <jarname> -->
+    <vertx.createFatJar>true</vertx.createFatJar>
+
+    <!--Vertx module name-->
+    <module.name>${project.groupId}~${project.artifactId}~${project.version}</module.name>
+
+    <!-- The directory where the module will be assembled - you can override this on the command line
+    with -Dmods.directory=mydir -->
+    <mods.directory>target/mods</mods.directory>
+
+    <!--Dependency versions-->
+    <vertx.version>3.0.0-milestone2</vertx.version>
+    <vertx.testtools.version>2.0.3-final</vertx.testtools.version>
+    <junit.version>4.11</junit.version>
+
+    <!--Plugin versions-->
+    <maven.compiler.plugin.version>3.0</maven.compiler.plugin.version>
+    <maven.resources.plugin.version>2.6</maven.resources.plugin.version>
+    <maven.clean.plugin.version>2.5</maven.clean.plugin.version>
+    <maven.vertx.plugin.version>2.0.11-final</maven.vertx.plugin.version>
+    <maven.surefire.plugin.version>2.14</maven.surefire.plugin.version>
+    <maven.failsafe.plugin.version>2.14</maven.failsafe.plugin.version>
+    <maven.surefire.report.plugin.version>2.14</maven.surefire.report.plugin.version>
+    <maven.javadoc.plugin.version>2.9</maven.javadoc.plugin.version>
+    <maven.dependency.plugin.version>2.7</maven.dependency.plugin.version>
+  </properties>
+
+  <repositories>
+    <repository>
+      <id>sonatype-nexus-snapshots</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </repository>
+  </repositories>
+
+  <dependencies>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-hazelcast</artifactId>
+      <version>${vertx.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <!-- If you're using the Vert.x Java API you need this dependency -->
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-core</artifactId>
+        <version>${vertx.version}</version>
+    </dependency>
+
+    <!-- If you're using the Vert.x Groovy API you need this dependency -->
+
+
+
+
+    <!-- We're using the SockJS bridge for bridging the event bus to client side JavaScript -->
+
+    <!-- We use services -->
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-service-factory</artifactId>
+        <version>${vertx.version}</version>
+    </dependency>
+    <!-- We depend on the Vert.x test jar so we can extend VertxTestBase for asynchronous tests -->
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-core</artifactId>
+        <version>${vertx.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>2.3</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jacpfx</groupId>
+      <artifactId>microservice-common</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jacpfx</groupId>
+      <artifactId>microservice-verticle</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>2.3</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.ws.rs</groupId>
+      <artifactId>javax.ws.rs-api</artifactId>
+      <version>2.0.1</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+
+
+      <!-- Other plugins required by the build -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${maven.compiler.plugin.version}</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+      </plugin>
+      <!-- Fat executable jars
+  If you want your project to output a fat executable standalone jar with all the dependencies in it you
+  can use the shade plugin. -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>2.3</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <manifestEntries>
+                    <Main-Class>io.vertx.core.Starter</Main-Class>
+                    <Main-Verticle>org.jacpfx.service.RESTGetVerticleService</Main-Verticle>
+                  </manifestEntries>
+                </transformer>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                  <resource>META-INF/services/io.vertx.core.spi.VerticleFactory</resource>
+                </transformer>
+              </transformers>
+              <artifactSet>
+                <excludes>
+                  <exclude>io.vertx:codegen</exclude>
+                  <exclude>junit:junit</exclude>
+                  <exclude>org.mvel:mvel2</exclude>
+                  <exclude>log4j:log4j</exclude>
+                  <exclude>org.slf4j:slf4j-api</exclude>
+                </excludes>
+              </artifactSet>
+              <outputFile>${project.build.directory}/${artifactId}-${version}-fat.jar</outputFile>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+
+  </build>
+</project>

@@ -12,6 +12,7 @@ import org.jacpfx.vertx.services.ServiceVerticle;
 
 import javax.ws.rs.*;
 import java.io.UnsupportedEncodingException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by amo on 29.10.14.
@@ -26,13 +27,110 @@ public class RESTGetVerticleService extends ServiceVerticle {
 
     }
 
+    @Path("/wsEndpintTwo")
+    @OperationType(Type.WEBSOCKET)
+    public void wsEndpointTwo(String name,MessageReply reply) {
+        reply.replyAsync(() -> {
+            try {
+                TimeUnit.MILLISECONDS.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return name + "-3"+Thread.currentThread();
+        });
+        reply.replyAsync(() -> {
+            try {
+                TimeUnit.MILLISECONDS.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return name + "-4"+Thread.currentThread();
+        });
+        reply.replyAsync(() -> {
+            try {
+                TimeUnit.MILLISECONDS.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return name + "-5"+Thread.currentThread();
+        });
+        reply.replyAsync(() -> {
+            try {
+                TimeUnit.MILLISECONDS.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return name + "-6"+Thread.currentThread();
+        });
+        System.out.println("Message-2: "+name+"   :::"+this);
+    }
+
+    @Path("/wsEndpintThree")
+    @OperationType(Type.WEBSOCKET)
+    public void wsEndpointThreeReplyToAll(String name,MessageReply reply) {
+        reply.replyToAllAsync(() -> {
+            try {
+                TimeUnit.MILLISECONDS.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return name + "-3" + Thread.currentThread();
+        });
+        reply.replyToAllAsync(() -> {
+            try {
+                TimeUnit.MILLISECONDS.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return name + "-4" + Thread.currentThread();
+        });
+        reply.replyToAllAsync(() -> {
+            try {
+                TimeUnit.MILLISECONDS.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return name + "-5" + Thread.currentThread();
+        });
+        reply.replyToAllAsync(() -> {
+            try {
+                TimeUnit.MILLISECONDS.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return name + "-6"+Thread.currentThread();
+        });
+        System.out.println("Message-2: "+name+"   :::"+this);
+    }
+
+
+    @Path("/wsEndpintFour")
+    @OperationType(Type.WEBSOCKET)
+    public void wsEndpointThreeReplyToAllTwo(String name,MessageReply reply) {
+        reply.replyToAllAsync(() -> {
+            try {
+                TimeUnit.MILLISECONDS.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return name + "-3" + Thread.currentThread();
+        });
+        System.out.println("Message-4: "+name+"   :::"+this);
+    }
+
     @Path("/hello")
     @OperationType(Type.WEBSOCKET)
     public void wsEndpointHello(String name,MessageReply reply) {
 
-          reply.send(name);
-        reply.send(name + "-1");
         reply.send(name+"-2");
+        System.out.println("Message-1: "+name+"   :::"+this);
+    }
+
+    @Path("/asyncReply")
+    @OperationType(Type.WEBSOCKET)
+    public void wsEndpointAsyncReply(String name,MessageReply reply) {
+
+        reply.replyAsync(()-> name+"-2");
         System.out.println("Message-1: "+name+"   :::"+this);
     }
 
