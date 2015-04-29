@@ -23,6 +23,7 @@ public class RESTGetVerticleService extends ServiceVerticle {
 
     @Path("/wsEndpintOne")
     @OperationType(Type.WEBSOCKET)
+    @Consumes("application/json")
     public void wsEndpointOne(String name,MessageReply reply) {
 
     }
