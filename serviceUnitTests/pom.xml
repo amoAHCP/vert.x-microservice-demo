@@ -4,10 +4,10 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.jacpfx</groupId>
-  <artifactId>serviceOne</artifactId>
+  <artifactId>serviceUnitTests</artifactId>
   <packaging>jar</packaging>
   <version>0.1</version>
-  <name>Project - serviceOne</name>
+  <name>Project - serviceUnitTests</name>
   <url>http://maven.apache.org</url>
 
   <parent>
@@ -36,7 +36,7 @@
     <mods.directory>target/mods</mods.directory>
 
     <!--Dependency versions-->
-    <vertx.version>3.0.0</vertx.version>
+    <vertx.version>3.0.0-milestone6</vertx.version>
     <vertx.testtools.version>2.0.3-final</vertx.testtools.version>
     <junit.version>4.11</junit.version>
 
@@ -60,6 +60,18 @@
   </repositories>
 
   <dependencies>
+      <dependency>
+          <groupId>org.jacpfx</groupId>
+          <artifactId>serviceOne</artifactId>
+          <version>0.1</version>
+          <scope>compile</scope>
+      </dependency>
+      <dependency>
+          <groupId>org.jacpfx</groupId>
+          <artifactId>service-router</artifactId>
+          <version>1.0-SNAPSHOT</version>
+          <scope>compile</scope>
+      </dependency>
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-hazelcast</artifactId>

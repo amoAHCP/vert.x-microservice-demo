@@ -4,9 +4,7 @@ package org.jacpfx.service;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonObject;
-import org.jacpfx.common.MessageReply;
-import org.jacpfx.common.OperationType;
-import org.jacpfx.common.Type;
+import org.jacpfx.common.*;
 import org.jacpfx.model.Employee;
 import org.jacpfx.vertx.services.ServiceVerticle;
 
@@ -18,19 +16,39 @@ import java.util.concurrent.TimeUnit;
  * Created by amo on 29.10.14.
  */
 @ApplicationPath("/service-REST-GET")
+@Selfhosted(port=9090)
 public class RESTGetVerticleService extends ServiceVerticle {
 
 
-    @Path("/wsEndpintOne")
+   @Path("/wsEndpintOne")
     @OperationType(Type.WEBSOCKET)
     @Consumes("application/json")
-    public void wsEndpointOne(String name,MessageReply reply) {
+    public void wsEndpointOne(String name,WSMessageReply reply) {
+        vertx.fileSystem().readFile("employeeAll.json", ar ->{
+            if (ar.succeeded()) {
+                final Buffer result = ar.result();
+                try {
+                    reply.reply(new String(result.getBytes(),"UTF-8"));
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
 
+        });
+
+    }
+
+    @Path("/testSimpleString")
+    @OperationType(Type.WEBSOCKET)
+    @Consumes("application/json")
+    @Produces("application/json")
+    public void testSimpleString(String name, WSMessageReply reply) {
+        reply.reply(name);
     }
 
     @Path("/wsEndpintTwo")
     @OperationType(Type.WEBSOCKET)
-    public void wsEndpointTwo(String name,MessageReply reply) {
+    public void wsEndpointTwo(String name,WSMessageReply reply) {
         reply.replyAsync(() -> {
             try {
                 TimeUnit.MILLISECONDS.sleep(1000);
@@ -68,7 +86,7 @@ public class RESTGetVerticleService extends ServiceVerticle {
 
     @Path("/wsEndpintThree")
     @OperationType(Type.WEBSOCKET)
-    public void wsEndpointThreeReplyToAll(String name,MessageReply reply) {
+    public void wsEndpointThreeReplyToAll(String name,WSMessageReply reply) {
         reply.replyToAllAsync(() -> {
             try {
                 TimeUnit.MILLISECONDS.sleep(1000);
@@ -107,7 +125,7 @@ public class RESTGetVerticleService extends ServiceVerticle {
 
     @Path("/wsEndpintFour")
     @OperationType(Type.WEBSOCKET)
-    public void wsEndpointThreeReplyToAllTwo(String name,MessageReply reply) {
+    public void wsEndpointThreeReplyToAllTwo(String name,WSMessageReply reply) {
         reply.replyToAllAsync(() -> {
             try {
                 TimeUnit.MILLISECONDS.sleep(1000);
@@ -121,15 +139,15 @@ public class RESTGetVerticleService extends ServiceVerticle {
 
     @Path("/hello")
     @OperationType(Type.WEBSOCKET)
-    public void wsEndpointHello(String name,MessageReply reply) {
+    public void wsEndpointHello(String name,WSMessageReply reply) {
 
-        reply.send(name+"-2");
+        reply.reply(name + "-2");
         System.out.println("Message-1: "+name+"   :::"+this);
     }
 
     @Path("/asyncReply")
     @OperationType(Type.WEBSOCKET)
-    public void wsEndpointAsyncReply(String name,MessageReply reply) {
+    public void wsEndpointAsyncReply(String name,WSMessageReply reply) {
 
         reply.replyAsync(()-> name+"-2");
         System.out.println("Message-1: "+name+"   :::"+this);
@@ -179,6 +197,8 @@ public class RESTGetVerticleService extends ServiceVerticle {
         return new Employee(id,"dfg",null,"dfg","fdg","dfg");
     }
 
+
+
     @Path("/getAll")
     @OperationType(Type.REST_GET)
     @Produces({"text/json","application/json"})
@@ -196,4 +216,14 @@ public class RESTGetVerticleService extends ServiceVerticle {
 
         });
     }
+
+    @Path("/testSimpleJsonString")
+    @OperationType(Type.EVENTBUS)
+    @Consumes("application/json")
+    public void testSimpleJsonString(String name, EBMessageReply reply) {
+        System.out.println(name);
+        reply.reply("ass");
+    }
+
+
 }
